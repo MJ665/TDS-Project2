@@ -1,5 +1,13 @@
+import numpy as np
+import pandas as pd
+from fastapi import FastAPI, Form, HTTPException, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
+import re
 from datetime import datetime, timedelta
-
+import json
+import hashlib
+from datetime import datetime, timedelta
+import json
 import numpy as np
 import pandas as pd
 
@@ -26,17 +34,26 @@ app.add_middleware(
 )
 
 # API Endpoint for solving assignment
+# @app.post("/api/")
+# async def solve_assignment(question: str = Form(...)):
+#     try:
+#         result = route_to_function(question)
+#         return {"answer": result}
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/api/")
-async def solve_assignment(question: str = Form(...)):
+async def solve_assignment(question: str = Form(...), file: UploadFile = File(None)):
     try:
-        result = route_to_function(question)
+        result = route_to_function(question, file)
         return {"answer": result}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 # Determine which function to run based on the question
 # Determine which function to run based on the question
-def route_to_function(question):
+def route_to_function(question, file: UploadFile = None):
     if "code -s" in question.lower():
         return extract_vs_code_version()
     elif "httpie" in question.lower() and "https://httpbin.org/get" in question.lower():
@@ -44,7 +61,7 @@ def route_to_function(question):
         email = email_match.group(1) if email_match else "22f3001551@ds.study.iitm.ac.in"
         return send_httpie_request(email)
     elif "npx" in question.lower() and "prettier" in question.lower() and "sha256sum" in question.lower():
-        return run_prettier_sha256sum()
+        return run_prettier_sha256sum(file)
     elif "google sheets" in question.lower() and "formula" in question.lower():
         return simulate_google_sheet_function(question)
     elif "excel" in question.lower() and "formula" in question.lower():
@@ -57,6 +74,15 @@ def route_to_function(question):
     
     elif "how many wednesdays" in question.lower():
         return count_wednesdays(question)
+    elif "extract" in question.lower() and "csv" in question.lower() and "zip" in question.lower():
+        return extract_csv_from_zip(file)
+    elif re.search(r"\[.*\].*Sorted JSON:", question, re.DOTALL):
+        return sort_json_array(question)
+    elif "cursors and convert it into a single json object" in question.lower() and file is not None:
+        # return convert_to_json(file)
+        return convert_to_json_and_hash(file)
+
+
     
     else:
         return "Unsupported question. Please provide a valid input."
@@ -113,13 +139,82 @@ def send_httpie_request(email):
 
 
 
-# Hardcoded output for the prettier sha256sum command
-def run_prettier_sha256sum():
+
+
+
+
+
+
+def extract_csv_from_zip(file: UploadFile):
     try:
-        return "f958fc270ae3a8a4cc9a2b4bb4877b291a2c3670d6d94387eda8a3e21ccc6c88"
+        # Validate file input
+        if not file.filename.endswith(".zip"):
+            raise HTTPException(status_code=400, detail="Uploaded file is not a ZIP file.")
+
+        # Save uploaded ZIP file
+        zip_path = f"/tmp/{file.filename}"
+        with open(zip_path, "wb") as buffer:
+            buffer.write(file.file.read())
+
+        # Create extraction directory
+        extract_dir = "/tmp/extracted"
+        os.makedirs(extract_dir, exist_ok=True)
+
+        # Extract the ZIP using subprocess
+        subprocess.run(["unzip", "-o", zip_path, "-d", extract_dir], check=True)
+        
+        # Find the extracted CSV
+        extracted_files = os.listdir(extract_dir)
+        csv_file = next((f for f in extracted_files if f.endswith(".csv")), None)
+
+        if not csv_file:
+            raise HTTPException(status_code=400, detail="No CSV file found in the ZIP.")
+
+        # Read CSV using pandas
+        csv_path = os.path.join(extract_dir, csv_file)
+        df = pd.read_csv(csv_path)
+
+        # Check for 'answer' column
+        if "answer" not in df.columns:
+            raise HTTPException(status_code=400, detail="No 'answer' column found in the CSV.")
+
+        return str(df["answer"].iloc[0])
+    except subprocess.CalledProcessError as e:
+        raise HTTPException(status_code=500, detail=f"Error extracting ZIP: {e}")
     except Exception as e:
-        return str(e)
-    
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+
+def run_prettier_sha256sum(file: UploadFile):
+    try:
+        # Save the uploaded file
+        file_path = f"/tmp/{file.filename}"
+        with open(file_path, "wb") as buffer:
+            buffer.write(file.file.read())
+
+        # Check if npx, prettier, and sha256sum are installed
+        npx_check = subprocess.run(["npx", "--version"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        prettier_check = subprocess.run(["npx", "prettier", "--version"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        sha256_check = subprocess.run(["sha256sum", "--version"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        # Install if missing
+        if npx_check.returncode != 0 or prettier_check.returncode != 0:
+            subprocess.run(["npm", "install", "-g", "npx", "prettier@3.4.2"])
+        if sha256_check.returncode != 0:
+            subprocess.run(["apt-get", "install", "-y", "coreutils"])
+
+        # Run npx and sha256sum command using subprocess
+        cmd = f"npx -y prettier@3.4.2 {file_path} | sha256sum"
+        result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+
+        if result.returncode != 0:
+            raise HTTPException(status_code=500, detail=result.stderr)
+
+        return result.stdout.strip().split()[0]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
     
 
 
@@ -245,6 +340,122 @@ def count_wednesdays(question):
 
 
 
+from fastapi.responses import JSONResponse
+import re
+import json
+
+def sort_json_array(question):
+    try:
+        print("Received question for sorting JSON:", question)
+        
+        match = re.search(r'\[.*?\]', question, re.DOTALL)
+        if not match:
+            return "Error: No valid JSON array found in the question."
+        
+        json_data = match.group(0)
+        data = json.loads(json_data)
+        
+        if not isinstance(data, list):
+            return "Error: Provided data is not a JSON array."
+        
+        for obj in data:
+            if not all(k in obj for k in ('age', 'name')):
+                return "Error: JSON objects must contain both 'age' and 'name' fields."
+        
+        sorted_data = sorted(data, key=lambda x: (x['age'], x['name']))
+        return json.dumps(sorted_data, separators=(',', ':'))
+    except Exception as e:
+        return str(e)
+
+
+from fastapi import UploadFile
+import json
+from fastapi.responses import JSONResponse
+
+from fastapi import UploadFile
+from fastapi.responses import Response
+import json
+
+# def convert_to_json(file: UploadFile):
+#     try:
+#         # Read the uploaded file
+#         content = file.file.read().decode("utf-8").strip().split("\n")
+        
+#         # Convert key=value to JSON object
+#         data = {}
+#         for line in content:
+#             if '=' not in line:
+#                 return Response(content="Error: Invalid format. Expected 'key=value' on each line.", status_code=400)
+#             key, value = line.split('=', 1)
+#             data[key.strip()] = value.strip()
+
+#         # Convert dictionary to JSON using json.dumps
+#         json_data = json.dumps(data, indent=4)
+
+#         # Return clean JSON without extra metadata
+#         return Response(content=json_data, media_type="application/json")
+#     except Exception as e:
+#         return Response(content=str(e), status_code=500)
+
+
+
+
+# def convert_to_json_and_hash(file: UploadFile):
+#     try:
+#         content = file.file.read().decode("utf-8").strip().split("\n")
+#         data = {}
+        
+#         for line in content:
+#             if '=' not in line:
+#                 return "Error: Invalid format. Expected 'key=value' on each line."
+#             key, value = line.split('=', 1)
+#             data[key.strip()] = value.strip()
+
+#         # Canonical JSON serialization
+#         json_data = json.dumps(data, sort_keys=True, separators=(",", ":"))
+
+#         # Write JSON data to temp file
+#         with open("temp.json", "w") as f:
+#             f.write(json_data)
+
+#         # Execute JavaScript hashing using subprocess
+#         result = subprocess.run(["node", "hash.js", "temp.json"], capture_output=True, text=True)
+
+#         if result.returncode != 0:
+#             return f"Error: {result.stderr.strip()}"
+
+#         return result.stdout.strip()
+#     except Exception as e:
+#         return str(e)
+
+import json
+import subprocess
+from fastapi import UploadFile
+
+def convert_to_json_and_hash(file: UploadFile):
+    try:
+        content = file.file.read().decode("utf-8").strip().split("\n")
+        data = {}
+
+        for line in content:
+            if '=' not in line:
+                return "Error: Invalid format. Expected 'key=value' on each line."
+            key, value = line.split('=', 1)
+            data[key.strip()] = value.strip()
+
+        # Serialize JSON without sorting
+        json_data = json.dumps(data, separators=(",", ":"))
+        # print(json_data)
+
+        # Execute JavaScript hashing using subprocess
+        result = subprocess.run(["node", "hash.js"], input=json_data, capture_output=True, text=True)
+
+        if result.returncode != 0:
+            return f"Error: {result.stderr.strip()}"
+
+        return result.stdout.strip()
+    except Exception as e:
+        return str(e)
 
 
 

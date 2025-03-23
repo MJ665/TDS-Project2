@@ -74,7 +74,7 @@ What is the output of the command?
 
 curl -X POST http://localhost:8000/api/ \
   -H "Content-Type: multipart/form-data" \
-  -F "question=Download README.md and run npx -y prettier@3.4.2 README.md | sha256sum. What is the output of the command?" \
+  -F "question=Download  In the directory where you downloaded it, make sure it is called README.md, and run npx -y prettier@3.4.2 README.md | sha256sum. What is the output of the command?" \
   -F "file=@README.md"
 
 
@@ -193,8 +193,72 @@ curl -X POST http://localhost:8000/api/ \
 
 question 8
 
-Download and unzip file  which has a single extract.csv file inside.
+Download and unzip file q-extract-csv-zip.zip which has a single extract.csv file inside.
 
 What is the value in the "answer" column of the CSV file?
 
 
+curl -X POST http://localhost:8000/api/ \
+  -H "Content-Type: multipart/form-data" \
+  -F 'question=Download and unzip file q-extract-csv-zip.zip which has a single extract.csv file inside. What is the value in the "answer" column of the CSV file?' \
+  -F "file=@q-extract-csv-zip.zip"
+
+
+
+
+
+
+
+
+##############################################
+
+question 9
+
+
+curl -X POST http://localhost:8000/api/ \
+  -H "Content-Type: multipart/form-data" \
+  -F "question=Let's make sure you know how to use JSON. Sort this JSON array of objects by the value of the age field. In case of a tie, sort by the name field. Paste the resulting JSON below without any spaces or newlines.[{\"name\":\"Alice\",\"age\":68},{\"name\":\"Bob\",\"age\":72},{\"name\":\"Charlie\",\"age\":79},{\"name\":\"David\",\"age\":90},{\"name\":\"Emma\",\"age\":2},{\"name\":\"Frank\",\"age\":11},{\"name\":\"Grace\",\"age\":23},{\"name\":\"Henry\",\"age\":11},{\"name\":\"Ivy\",\"age\":40},{\"name\":\"Jack\",\"age\":77},{\"name\":\"Karen\",\"age\":74},{\"name\":\"Liam\",\"age\":37},{\"name\":\"Mary\",\"age\":37},{\"name\":\"Nora\",\"age\":21},{\"name\":\"Oscar\",\"age\":77},{\"name\":\"Paul\",\"age\":16}]Sorted JSON:"
+
+
+
+
+curl -X POST http://localhost:8000/api/ \
+  -H "Content-Type: multipart/form-data" \
+  -F 'question=Let'"'"'s make sure you know how to use JSON. Sort this JSON array of objects by the value of the age field. In case of a tie, sort by the name field. Paste the resulting JSON below without any spaces or newlines.
+
+[{"name":"Alice","age":68},{"name":"Bob","age":72},{"name":"Charlie","age":79},{"name":"David","age":90},{"name":"Emma","age":2},{"name":"Frank","age":11},{"name":"Grace","age":23},{"name":"Henry","age":11},{"name":"Ivy","age":40},{"name":"Jack","age":77},{"name":"Karen","age":74},{"name":"Liam","age":37},{"name":"Mary","age":37},{"name":"Nora","age":21},{"name":"Oscar","age":77},{"name":"Paul","age":16}]
+Sorted JSON:'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##############################################
+
+question 9
+
+Multi-cursor edits to convert to JSON (0.5 marks)
+Download q-multi-cursor-json.txt  and use multi-cursors and convert it into a single JSON object, where key=value pairs are converted into {key: value, key: value, ...}.
+
+What's the result when you paste the JSON at tools-in-data-science.pages.dev/jsonhash and click the Hash button?
+Incorrect. Try again.
+
+
+
+
+
+  curl -X POST http://localhost:8000/api/ \
+  -H "Content-Type: multipart/form-data" \
+  -F "question=Multi-cursor edits to convert to JSON (0.5 marks) Download and use multi-cursors and convert it into a single JSON object, where key=value pairs are converted into {key: value, key: value, ...}. What's the result when you paste the JSON at tools-in-data-science.pages.dev/jsonhash and click the Hash button?" \
+  -F "file=@q-multi-cursor-json.txt"
