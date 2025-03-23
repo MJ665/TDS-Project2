@@ -1,0 +1,195 @@
+# # from fastapi import FastAPI, File, Form, UploadFile, HTTPException
+# # import requests
+# # import os
+# # import json
+
+# # app = FastAPI()
+
+# # # AI Proxy Config
+# # AI_PROXY_URL = "https://aiproxy.sanand.workers.dev/openai/v1/chat/completions"
+# # AI_PROXY_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IjIyZjMwMDE1NTFAZHMuc3R1ZHkuaWl0bS5hYy5pbiJ9.BkF49EwczoSdCZlFVYsjSxDEoqI3An374-K86-0p-Mw"
+
+# # headers = {
+# #     "Authorization": f"Bearer {AI_PROXY_TOKEN}",
+# #     "Content-Type": "application/json"
+# # }
+
+# # # API Endpoint
+# # @app.post("/api/")
+# # async def solve_assignment(question: str = Form(...), file: UploadFile = File(None)):
+# #     try:
+# #         # Step 1: Analyze the question using AI Proxy
+# #         analysis_response = requests.post(
+# #             AI_PROXY_URL,
+# #             headers=headers,
+# #             json={
+# #                 "model": "gpt-4o-mini",
+# #                 "messages": [{"role": "user", "content": question}]
+# #             }
+# #         )
+# #         analysis_result = analysis_response.json()
+# #         ai_message = analysis_result['choices'][0]['message']['content']
+
+# #         # Step 2: Determine the appropriate function
+# #         result = route_to_function(question, ai_message, file)
+
+# #         return {"answer": result}
+    
+# #     except Exception as e:
+# #         raise HTTPException(status_code=500, detail=str(e))
+
+
+# # def route_to_function(question, ai_message, file):
+# #     # Routing logic based on AI analysis
+# #     if "extract CSV" in ai_message:
+# #         return handle_csv_extraction(file)
+# #     elif "calculate total sales" in ai_message:
+# #         return calculate_total_sales(question)
+# #     elif "VS Code version" in ai_message or "code -s" in question:
+# #         return extract_vs_code_version(file)
+# #     else:
+# #         return "Function not found or unsupported question."
+
+
+# # def handle_csv_extraction(file):
+# #     # Example function for extracting data from CSV
+# #     return "1234567890"  # Placeholder for extracted value
+
+# # def calculate_total_sales(question):
+# #     # Example function for calculating total sales from a database
+# #     return "50000"  # Placeholder for calculated result
+
+# # def extract_vs_code_version(file):
+# #     try:
+# #         content = file.file.read().decode("utf-8")
+# #         for line in content.splitlines():
+# #             if line.startswith("Version:"):
+# #                 return line.strip()
+# #         return "Version information not found."
+# #     except Exception as e:
+# #         return str(e)
+
+# # if __name__ == "__main__":
+# #     import uvicorn
+# #     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+
+
+
+
+
+# from fastapi import FastAPI, Form, HTTPException
+# import requests
+# import os
+# import json
+
+# app = FastAPI()
+
+# # AI Proxy Config
+# AI_PROXY_URL = "https://aiproxy.sanand.workers.dev/openai/v1/chat/completions"
+# AI_PROXY_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IjIyZjMwMDE1NTFAZHMuc3R1ZHkuaWl0bS5hYy5pbiJ9.BkF49EwczoSdCZlFVYsjSxDEoqI3An374-K86-0p-Mw"
+
+# headers = {
+#     "Authorization": f"Bearer {AI_PROXY_TOKEN}",
+#     "Content-Type": "application/json"
+# }
+
+# # API Endpoint
+# @app.post("/api/")
+# async def solve_assignment(question: str = Form(...)):
+#     try:
+#         # Step 1: Determine the appropriate function
+#         result = route_to_function(question)
+
+#         return {"answer": result}
+    
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
+
+
+# def route_to_function(question):
+#     # Routing logic based on input analysis
+#     if "code -s" in question.lower():
+#         return extract_vs_code_version(question)
+#     else:
+#         return "Unsupported question. Please provide a valid input."
+
+# def extract_vs_code_version(question):
+#     try:
+#         for line in question.splitlines():
+#             if line.startswith("Version:"):
+#                 return line.strip()
+#         return "Version information not found."
+#     except Exception as e:
+#         return str(e)
+
+# if __name__ == "__main__":
+#     import uvicorn
+#     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+
+
+
+
+
+# # /// script
+# # requires-python = ">=3.13"
+# # dependencies = [
+# #     "fastapi",
+# #     "uvicorn",
+# #     "requests",
+# #     "pathlib",
+# #     "numpy",
+# #     "pytesseract"
+# # ]
+# # ///
+
+# from fastapi import FastAPI, Form, HTTPException
+# from fastapi.middleware.cors import CORSMiddleware
+# import re
+# import subprocess
+# import os
+
+# app = FastAPI()
+
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["*"],
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
+
+# # API Endpoint for solving assignment
+# @app.post("/api/")
+# async def solve_assignment(question: str = Form(...)):
+#     try:
+#         result = route_to_function(question)
+#         return {"answer": result}
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
+
+# # Determine which function to run based on the question
+# def route_to_function(question):
+#     if "code -s" in question.lower():
+#         return extract_vs_code_version()
+#     else:
+#         return "Unsupported question. Please provide a valid input."
+
+# # Extract VS Code version using subprocess
+# def extract_vs_code_version():
+#     try:
+#         result = subprocess.run(["code", "-s"], capture_output=True, text=True)
+#         if result.returncode == 0:
+#             return result.stdout.strip()
+#         else:
+#             return result.stderr.strip() or "Error retrieving VS Code version."
+#     except Exception as e:
+#         return str(e)
+
+# if __name__ == "__main__":
+#     import uvicorn
+#     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+
+
