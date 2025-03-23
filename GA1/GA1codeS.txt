@@ -1,0 +1,50 @@
+Version:          Code 1.98.2 (ddc367ed5c8936efe395cffeec279b04ffd7db78, 2025-03-12T13:32:45.399Z)
+OS Version:       Darwin arm64 24.3.0
+CPUs:             Apple M1 (8 x 2400)
+Memory (System):  8.00GB (0.18GB free)
+Load (avg):       3, 4, 4
+VM:               0%
+Screen Reader:    no
+Process Argv:     --crash-reporter-id d756b68d-6bd7-45b2-8afc-0b22dcdf2757
+GPU Status:       2d_canvas:                              enabled
+                  canvas_oop_rasterization:               enabled_on
+                  direct_rendering_display_compositor:    disabled_off_ok
+                  gpu_compositing:                        enabled
+                  multiple_raster_threads:                enabled_on
+                  opengl:                                 enabled_on
+                  rasterization:                          enabled
+                  raw_draw:                               disabled_off_ok
+                  skia_graphite:                          disabled_off
+                  video_decode:                           enabled
+                  video_encode:                           enabled
+                  webgl:                                  enabled
+                  webgl2:                                 enabled
+                  webgpu:                                 enabled
+                  webnn:                                  disabled_off
+
+CPU %   Mem MB     PID  Process
+   15       82   69701  code main
+    1       33   69706     gpu-process
+    0        8   69708     utility-network-service
+    7      164   69709  window [1] (GA1codeS.txt — TDSProject)
+    0       41   69772  extensionHost [1]
+    0        8   69847       electron-nodejs (serverMain.js )
+    0        0   69849       /Users/meet/.pyenv/versions/3.9.6/bin/python /Users/meet/.vscode/extensions/ms-python.isort-2023.10.1/bundled/tool/lsp_server.py
+    0        8   69904       /Applications/Visual Studio Code.app/Contents/Frameworks/Code Helper (Plugin).app/Contents/MacOS/Code Helper (Plugin) /Applications/Visual Studio Code.app/Contents/Resources/app/extensions/json-language-features/server/dist/node/jsonServerMain --node-ipc --clientProcessId=69772
+    0       16   69905       electron-nodejs (bundle.js )
+    0       33   69773  ptyHost
+    0        8    2319       /bin/zsh -il
+    0        0   50497         bash /opt/homebrew/bin/code -s
+    1       41   50503           electron-nodejs (cli.js )
+    0        0   69812       /bin/zsh -i
+    0        0   69974       /bin/zsh -i
+    0        0   91674       /bin/zsh -il
+    0       25   69774  shared-process
+    0       16   69775  fileWatcher [1]
+    0        8   89328     utility-process
+
+Workspace Stats: 
+|  Window (GA1codeS.txt — TDSProject)
+|    Folder (TDSProject): 18 files
+|      File types: txt(6) py(4) md(1)
+|      Conf files: dockerfile(1)
