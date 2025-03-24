@@ -262,3 +262,283 @@ Incorrect. Try again.
   -H "Content-Type: multipart/form-data" \
   -F "question=Multi-cursor edits to convert to JSON (0.5 marks) Download and use multi-cursors and convert it into a single JSON object, where key=value pairs are converted into {key: value, key: value, ...}. What's the result when you paste the JSON at tools-in-data-science.pages.dev/jsonhash and click the Hash button?" \
   -F "file=@q-multi-cursor-json.txt"
+
+
+
+
+
+
+
+##############################################
+
+question 12
+
+Download and process the files in  which contains three files with different encodings:
+
+data1.csv: CSV file encoded in CP-1252
+data2.csv: CSV file encoded in UTF-8
+data3.txt: Tab-separated file encoded in UTF-16
+Each file has 2 columns: symbol and value. Sum up all the values where the symbol matches ˜ OR – OR ’ across all three files.
+
+What is the sum of all values associated with these symbols?
+
+
+
+
+
+
+
+
+
+  curl -X POST http://localhost:8000/api/ \
+  -H "Content-Type: multipart/form-data" \
+  -F "question=
+  Download q-unicode-data.zip and process the files in  which contains three files with different encodings:
+
+data1.csv: CSV file encoded in CP-1252
+data2.csv: CSV file encoded in UTF-8
+data3.txt: Tab-separated file encoded in UTF-16
+Each file has 2 columns: symbol and value. Sum up all the values where the symbol matches ˜ OR – OR ’ across all three files.
+
+What is the sum of all values associated with these symbols?
+  " \
+  -F "file=@q-unicode-data.zip"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##############################################
+
+question 14
+
+14 Replace across files (0.75 marks)
+Download q-replace-across-files.zip and unzip it into a new folder, then replace all "IITM" (in upper, lower, or mixed case) with "IIT Madras" in all files. Leave everything as-is - don't change the line endings.
+
+What does running cat * | sha256sum in that folder show in bash?
+
+
+
+
+  curl -X POST http://localhost:8000/api/ \
+  -H "Content-Type: multipart/form-data" \
+  -F "question= 14 Replace across files (0.75 marks)
+Download q-replace-across-files.zip and unzip it into a new folder then replace all IITM (in upper, lower, or mixed case) with IIT Madras in all files. Leave everything as-is - don't change the line endings.
+
+What does running cat * | sha256sum in that folder show in bash?
+  " \
+  -F "file=@q-replace-across-files.zip"
+
+
+
+
+
+
+
+
+
+
+##############################################
+
+question 15
+
+
+####################
+this one code not working 
+
+
+ List files and attributes (0.75 marks)
+Download q-list-files-attributes.zip and extract it. Use ls with options to list all files in the folder along with their date and file size.
+
+What's the total size of all files at least 9416 bytes large and modified on or after Sat, 29 Dec, 2012, 8:51 pm IST?
+
+
+
+
+
+
+
+
+##############Static code for this qusetion 
+
+
+
+  curl -X POST http://localhost:8000/api/ \
+  -H "Content-Type: multipart/form-data" \
+  -F "question= 
+ List files and attributes (0.75 marks)
+Download q-list-files-attributes.zip and extract it. Use ls with options to list all files in the folder along with their date and file size.
+
+What's the total size of all files at least 9416 bytes large and modified on or after Sat, 29 Dec, 2012, 8:51 pm IST?
+
+  " \
+  -F "file=@q-list-files-attributes.zip"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##############################################
+
+question 16
+
+
+ Move and rename files (0.5 marks)
+Download q-move-rename-files.zip and extract it. Use mv to move all files under folders into an empty folder. Then rename all files replacing each digit with the next. 1 becomes 2, 9 becomes 0, a1b9c.txt becomes a2b0c.txt.
+
+What does running grep . * | LC_ALL=C sort | sha256sum in bash on that folder show?
+
+
+
+
+
+
+
+  curl -X POST http://localhost:8000/api/ \
+  -H "Content-Type: multipart/form-data" \
+  -F "question= 
+ 
+ Move and rename files (0.5 marks)
+Download q-move-rename-files.zip and extract it. Use mv to move all files under folders into an empty folder. Then rename all files replacing each digit with the next. 1 becomes 2, 9 becomes 0, a1b9c.txt becomes a2b0c.txt.
+
+What does running grep . * | LC_ALL=C sort | sha256sum in bash on that folder show?
+
+  " \
+  -F "file=@q-move-rename-files.zip"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##############################################
+
+question 17
+
+
+ Compare files (0.5 marks)
+Download q-compare-files.zip and extract it. It has 2 nearly identical files, a.txt and b.txt, with the same number of lines.
+
+How many lines are different between a.txt and b.txt?
+
+
+
+
+
+
+
+
+
+
+
+  curl -X POST http://localhost:8000/api/ \
+  -H "Content-Type: multipart/form-data" \
+  -F "question= 
+
+ Compare files (0.5 marks)
+Download q-compare-files.zip and extract it. It has 2 nearly identical files, a.txt and b.txt, with the same number of lines.
+
+How many lines are different between a.txt and b.txt?
+  " \
+  -F "file=@q-compare-files.zip"
+
+
+
+
+
+
+
+
+
+
+
+
+##############################################
+
+question 18
+
+
+SQL: Ticket Sales (0.75 marks)
+
+There is a tickets table in a SQLite database that has columns type, units, and price. Each row is a customer bid for a concert ticket.
+
+type	units	price
+Gold	503	0.69
+Gold	662	1.79
+Bronze	988	1.23
+SILVER	236	1.25
+silver	95	0.7
+...
+What is the total sales of all the items in the "Gold" ticket type? Write SQL to calculate it.
+SQLite3Error: exec() requires an SQL string.
+Get all rows where the Type is "Gold". Ignore spaces and treat mis-spellings like GOLD, gold, etc. as "Gold". Calculate the sales as Units * Price, and sum them up.
+
+
+
+
+
+
+
+
+
+
+
+
+
+  curl -X POST http://localhost:8000/api/ \
+  -H "Content-Type: multipart/form-data" \
+  -F 'question= 
+
+SQL: Ticket Sales (0.75 marks)
+
+There is a tickets table in a SQLite database that has columns type, units, and price. Each row is a customer bid for a concert ticket.
+
+type	units	price
+Gold	503	0.69
+Gold	662	1.79
+Bronze	988	1.23
+SILVER	236	1.25
+silver	95	0.7
+...
+What is the total sales of all the items in the "Gold" ticket type? Write SQL to calculate it.
+SQLite3Error: exec() requires an SQL string.
+Get all rows where the Type is "Gold". Ignore spaces and treat mis-spellings like GOLD, gold, etc. as "Gold". Calculate the sales as Units * Price, and sum them up.
+
+  '
+
