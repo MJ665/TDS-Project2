@@ -217,7 +217,7 @@ def GA1_13(question):
         replacement=f'"email": "{email}"'
     )
     print("Email updated in email.json")
-    return "https://raw.githubusercontent.com/MJ665/Test/main/email.json"
+    return "https://raw.githubusercontent.com/mj665/Test/main/email.json"
 
 def GA2_3(question):
     pattern = r"\b([\w.+-]+)@ds\.study\.iitm\.ac\.in\b"
@@ -239,7 +239,7 @@ def GA2_3(question):
     trigger_github_workflow(token=token, repo="MJ665/website",
                             workflow_file="daily_commit.yml")  # Trigger the workflow after
     time.sleep(15)
-    return "https://mj665.github.io/website/?v=2"
+    return "https://mj665.github.io/website/"
 
 async def GA2_6_file(file: UploadFile = File(...)):
     """
@@ -293,7 +293,7 @@ def GA2_7(question):
     trigger_github_workflow(
         token=token, repo="MJ665/Test", workflow_file="Daily_Commit.yml")
     time.sleep(15)
-    return "https://github.com/MJ665/Test"
+    return "https://github.com/mj665/Test"
 
 def GA4_8(question):
     return GA2_7(question)
