@@ -553,6 +553,16 @@ async def GA1_15(question: str, zip_file: UploadFile):
 # What does running grep . * | LC_ALL=C sort | sha256sum in bash on that folder show?
 
 
+
+
+
+def ensure_directory_exists(path):
+    if os.path.exists(path):
+        shutil.rmtree(path)
+    os.makedirs(path, exist_ok=True)
+
+
+
 async def GA1_16_LINX(file: UploadFile):
     try:
         work_folder = '/tmp/digit_replace_folder'
@@ -615,25 +625,21 @@ async def GA1_16_LINX(file: UploadFile):
         raise HTTPException(status_code=500, detail=str(e))
     
 
-
-
 async def GA1_16(zip_file: UploadFile):
+    print(f"GA1_16 received file: {zip_file}")  # Debugging
+
+    if zip_file is None:
+        raise HTTPException(status_code=400, detail="No file was uploaded.")
+
     # Use "/tmp/" for Vercel, or local paths when running locally
-    print(os.getenv("VERCEL"))
     if not os.getenv("VERCEL"):
         return await GA1_16_LINX(zip_file)
     else:
-        return await GA1_16_Vercel("/tmp", zip_file)
+        return await GA1_16_Vercel( zip_file)
 
 
 
-def ensure_directory_exists(path):
-    if os.path.exists(path):
-        shutil.rmtree(path)
-    os.makedirs(path, exist_ok=True)
-
-
-async def GA1_16_Vercel(BASE_DIR, zip_file: UploadFile):
+async def GA1_16_Vercel( file: UploadFile):
     try:
         work_folder = '/tmp/digit_replace_folder'
         ensure_directory_exists(work_folder)
