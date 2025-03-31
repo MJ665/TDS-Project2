@@ -1,4 +1,4 @@
-from ga1 import GA1_2, GA1_3, GA1_4, GA1_5, GA1_6, GA1_7, GA1_8, GA1_9, GA1_10, GA1_11, GA1_12, GA1_14, GA1_15, GA1_16, GA1_17, GA1_18
+from ga1 import GA1_2, GA1_3, GA1_4, GA1_5, GA1_6, GA1_7, GA1_8, GA1_9, GA1_10, GA1_11, GA1_12,  GA1_14, GA1_15, GA1_16, GA1_17, GA1_18
 from ga2 import GA2_2, GA2_4, GA2_5, GA2_5_file, GA2_9_old
 from ga2_9 import read_student_data, get_students
 from ga3 import GA3_1, GA3_2, GA3_3, GA3_4, GA3_5, GA3_6
@@ -34,7 +34,8 @@ async def fetch_answer(task_id, question, file_path):
         answer = GA1_11(question, file_path)
     if task_id == 'GA1.12':
         answer = await GA1_12(question, file_path)
-    # if task_id == 'GA1.13': extract from excel
+    # if task_id == 'GA1.13': 
+    #     answer =  GA1_13(file_path)
     if task_id == 'GA1.14':
         answer = await GA1_14(question, file_path)
     if task_id == 'GA1.15':

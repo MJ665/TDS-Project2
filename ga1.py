@@ -1,4 +1,4 @@
-
+from fastapi import UploadFile, HTTPException
 from tempfile import NamedTemporaryFile
 import os
 import io
@@ -390,45 +390,118 @@ async def GA1_12(question: str, zip_file: UploadFile):
 
 # def GA1_13(question):
 
+# def GA1_13(file: UploadFile):
+    try:
+        # Validate file input
+        if not file.filename.endswith(".zip"):
+            raise HTTPException(status_code=400, detail="Uploaded file is not a ZIP file.")
+
+        # Save uploaded ZIP file
+        zip_path = f"/tmp/{file.filename}"
+        with open(zip_path, "wb") as buffer:
+            buffer.write(file.file.read())
+
+        # Create extraction directory
+        extract_dir = "/tmp/extracted_files"
+        os.makedirs(extract_dir, exist_ok=True)
+
+        # Extract the ZIP using zipfile
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(extract_dir)
+
+        # Perform case-insensitive replacement of "IITM" with "IIT Madras" across all files
+        pattern = re.compile(r"IITM", re.IGNORECASE)
+        
+        for root, _, files in os.walk(extract_dir):
+            for filename in files:
+                file_path = os.path.join(root, filename)
+                
+                with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    content = f.read()
+
+                # Replace without altering line endings
+                updated_content = pattern.sub("IIT Madras", content)
+
+                with open(file_path, 'w', encoding='utf-8', errors='ignore') as f:
+                    f.write(updated_content)
+
+        # Run cat * | sha256sum to generate the hash
+        # Run cat * | sha256sum and extract only the hash using awk
+        result = subprocess.run(
+            ['bash', '-c', f'cat {extract_dir}/* | sha256sum | awk \'{{print $1}}\'' ],
+            capture_output=True, text=True
+        )
+
+
+        if result.returncode != 0:
+            raise HTTPException(status_code=500, detail=f"Error: {result.stderr.strip()}")
+
+        return result.stdout.strip()
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+
+
 # Download  and unzip it into a new folder, then replace all "IITM" ( in upper, lower, or mixed case) with "IIT Madras" in all files. Leave everything as- is - don't change the line endings.
 # What does running cat * | sha256sum in that folder show in bash?
 
 
-async def GA1_14(question: str, zip_file: UploadFile):
-    # Step 1: Extract words to replace and the replacement word from the question
-    pattern = r'replace all "([^"]+)" \(in upper, lower, or mixed case\) with "([^"]+)" in all files'
-    match = re.search(pattern, question, re.IGNORECASE)
-    if not match:
-        raise ValueError("Invalid question format: Unable to extract words.")
+async def GA1_14(question: str, file: UploadFile):
 
-    word_to_replace = match.group(1)  # The word to replace
-    replacement_word = match.group(2)  # The replacement word
+# def GA1_13(file: UploadFile):
+    try:
+        # Validate file input
+        if not file.filename.endswith(".zip"):
+            raise HTTPException(status_code=400, detail="Uploaded file is not a ZIP file.")
 
-    print("Word to replace:", word_to_replace)
-    print("Replacement word:", replacement_word)
+        # Save uploaded ZIP file
+        zip_path = f"/tmp/{file.filename}"
+        with open(zip_path, "wb") as buffer:
+            buffer.write(file.file.read())
 
-    # Step 2: Read ZIP file in-memory
-    zip_bytes = await zip_file.read()
-    sha256_hash = hashlib.sha256()
+        # Create extraction directory
+        extract_dir = "/tmp/extracted_files"
+        os.makedirs(extract_dir, exist_ok=True)
 
-    with zipfile.ZipFile(io.BytesIO(zip_bytes), "r") as zip_ref:
-        file_contents = {}
+        # Extract the ZIP using zipfile
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(extract_dir)
 
-        # Read and modify file contents
-        for filename in sorted(zip_ref.namelist()):  # Ensure consistent order
-            with zip_ref.open(filename) as file:
-                content = file.read().decode("utf-8")  # Decode file content
-                updated_content = re.sub(
-                    re.escape(word_to_replace), replacement_word, content, flags=re.IGNORECASE)
-                file_contents[filename] = updated_content.encode(
-                    "utf-8")  # Store modified content
+        # Perform case-insensitive replacement of "IITM" with "IIT Madras" across all files
+        pattern = re.compile(r"IITM", re.IGNORECASE)
+        
+        for root, _, files in os.walk(extract_dir):
+            for filename in files:
+                file_path = os.path.join(root, filename)
+                
+                with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    content = f.read()
 
-        # Compute hash from modified contents
-        for filename in sorted(file_contents.keys()):
-            sha256_hash.update(file_contents[filename])
+                # Replace without altering line endings
+                updated_content = pattern.sub("IIT Madras", content)
 
-    # Return the final SHA-256 hash value
-    return sha256_hash.hexdigest()
+                with open(file_path, 'w', encoding='utf-8', errors='ignore') as f:
+                    f.write(updated_content)
+
+        # Run cat * | sha256sum to generate the hash
+        # Run cat * | sha256sum and extract only the hash using awk
+        result = subprocess.run(
+            ['bash', '-c', f'cat {extract_dir}/* | sha256sum | awk \'{{print $1}}\'' ],
+            capture_output=True, text=True
+        )
+
+
+        if result.returncode != 0:
+            raise HTTPException(status_code=500, detail=f"Error: {result.stderr.strip()}")
+
+        return result.stdout.strip()
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 
 # Download and extract it. Use ls with options to list all files in the folder along with their date and file size.
 # What's the total size of all files at least 3352 bytes large and modified on or after Fri, 17 Aug, 2018, 4: 06 am IST?'
