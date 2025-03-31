@@ -8,8 +8,8 @@ import asyncio
 from fastapi.responses import HTMLResponse
 # token = "github?_pat?_11AUF774Y0tEYjPK91yFns_s2JYf1zM5bpXhHbT0RkuBiPASWT8RcAxxD656fScuN4N5GWOKVZdR9b8Hn3?"
 # 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
-# token = "github?_pat?_11A2TSKRY0Si1UcFuG57BC_og4IXzwanc1KH06WhP1ezYokUpuG0ZK3sgS7IejPMEVBKIRMQWTx0ynOfZf?"
-token = "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"
+token = "github?_pat?_11A2TSKRY0Si1UcFuG57BC_og4IXzwanc1KH06WhP1ezYokUpuG0ZK3sgS7IejPMEVBKIRMQWTx0ynOfZf?"
+# token = "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"
 # token = token.replace("?", "")
 
 
