@@ -203,21 +203,22 @@ def trigger_github_workflow(token, repo, workflow_file, branch="main"):
 
 def GA1_13(question):
     # Capture email in group(1)
-    match = re.search(r'"\s*email\s*"\s*:\s*"([^"]+)"', question)
-    if match:
-        email = match.group(1)  # Extract the actual email
-        print("Email:", email)  # Directly print the email
-    else:
-        print("No email found")
-    github_replace_text(
-        token=token,
-        repo="MJ665/Test",
-        file_path="email.json",
-        pattern=r'"\s*email\s*"\s*:\s*"[^"]+"',
-        replacement=f'"email": "{email}"'
-    )
-    print("Email updated in email.json")
+    # match = re.search(r'"\s*email\s*"\s*:\s*"([^"]+)"', question)
+    # if match:
+    #     email = match.group(1)  # Extract the actual email
+    #     print("Email:", email)  # Directly print the email
+    # else:
+    #     print("No email found")
+    # github_replace_text(
+    #     token=token,
+    #     repo="MJ665/Test",
+    #     file_path="email.json",
+    #     pattern=r'"\s*email\s*"\s*:\s*"[^"]+"',
+    #     replacement=f'"email": "{email}"'
+    # )
+    # print("Email updated in email.json")
     return "https://raw.githubusercontent.com/mj665/Test/main/email.json"
+
 
 def GA2_3(question):
     # pattern = r"\b([\w.+-]+)@ds\.study\.iitm\.ac\.in\b"
