@@ -7,8 +7,10 @@ from fastapi import FastAPI, Form, File, UploadFile # type: ignore
 import asyncio
 from fastapi.responses import HTMLResponse
 # token = "github?_pat?_11AUF774Y0tEYjPK91yFns_s2JYf1zM5bpXhHbT0RkuBiPASWT8RcAxxD656fScuN4N5GWOKVZdR9b8Hn3?"
-token = "github?_pat?_11A2TSKRY0Si1UcFuG57BC_og4IXzwanc1KH06WhP1ezYokUpuG0ZK3sgS7IejPMEVBKIRMQWTx0ynOfZf?"
-token = token.replace("?", "")
+# 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
+# token = "github?_pat?_11A2TSKRY0Si1UcFuG57BC_og4IXzwanc1KH06WhP1ezYokUpuG0ZK3sgS7IejPMEVBKIRMQWTx0ynOfZf?"
+token = "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"
+# token = token.replace("?", "")
 
 
 def github_file_operation(token, repo, file_path, branch="main", new_content=None):
@@ -228,7 +230,7 @@ def GA2_3(question):
     pattern = r"\b([\w.+-]+)@ds\.study\.iitm\.ac\.in\b"
     github_replace_text(
         token=token,
-        repo="MJ665/website",
+        repo="mj665/website",
         file_path="index.html",
         pattern=pattern,
         replacement=email
@@ -237,7 +239,7 @@ def GA2_3(question):
     trigger_github_workflow(token=token, repo="MJ665/website",
                             workflow_file="daily_commit.yml")  # Trigger the workflow after
     time.sleep(15)
-    return "https://MJ665.github.io/website/?v=2"
+    return "https://mj665.github.io/website/?v=2"
 
 async def GA2_6_file(file: UploadFile = File(...)):
     """
